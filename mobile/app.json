@@ -1,0 +1,33 @@
+{
+  "expo": {
+    "name": "The Narad",
+    "slug": "narad",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "scheme": "narad",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#E8541E"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": { "supportsTablet": false },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#E8541E"
+      },
+      "package": "com.narad.app"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-location",
+      [
+        "expo-image-picker",
+        { "photosPermission": "The Narad needs access to upload news photos." }
+      ]
+    ]
+  }
+}

@@ -1,0 +1,137 @@
+================================================================
+THE NARAD — V1 PROTOTYPE PLAN
+================================================================
+
+CONCEPT
+-------
+Citizen journalism app. Users post local news → admin verifies → appears on feed.
+Tagline: "Real News Reaches Real People"
+
+CORE LOOP (V1)
+--------------
+Read news → Post news → Admin verifies → Live on feed
+
+================================================================
+SCREENS (8 total)
+================================================================
+1. Splash / Onboarding
+2. OTP Login (phone number)
+3. Home Feed (For You + My City tabs)
+4. Article Detail
+5. Search (text-based)
+6. Post / Submit Article
+7. Profile (own posts only)
+8. Admin Panel (web — approve/reject posts)
+
+================================================================
+WHAT WE BUILD vs WHAT WE CUT
+================================================================
+
+HOMEPAGE
+  KEEP:   For You feed + My City tabs, bottom nav (5 icons)
+  CUT:    "Following" tab (no follow system in V1)
+  ASSUME: Feed is chronological, simple category filter (no AI personalization)
+
+SEARCH
+  KEEP:   Text search by keyword / category / location
+  CUT:    Voice search, AI Answer Box, trending section
+  ASSUME: Full-text search on article title + body (PostgreSQL tsvector)
+
+POST PAGE
+  KEEP:   Title, category, location (text input), body text, image upload
+  CUT:    Video upload, AI writing assistant
+  ASSUME: Posts go into PENDING state — admin manually reviews (no AI in V1)
+
+MAP
+  CUT ENTIRELY in V1 — location stored as text tag only
+  ADD in V1.1 once enough geo data exists
+
+PROFILE
+  KEEP:   Username, article count, list of own posts
+  CUT:    Followers/following, points/monetization, click analytics
+  ASSUME: Auth via phone OTP (simple, India-friendly)
+
+"AI VERIFIED" BADGE in V1
+  Manually set by admin via simple dashboard
+  No real AI — just Approve / Reject buttons
+  Real AI verification comes in V1.1
+
+================================================================
+TECH STACK
+================================================================
+Frontend   : React Native (Expo) — single codebase iOS + Android
+Backend    : Node.js + Express — simple REST API
+Database   : PostgreSQL via Supabase — managed, free tier, built-in auth
+Storage    : Supabase Storage — images only, no video in V1
+Auth       : Supabase Auth (Phone OTP) — no passwords
+Hosting    : Railway (backend) + Expo Go / EAS (mobile)
+
+================================================================
+DATA MODEL (Minimal)
+================================================================
+
+TABLE: users
+  - id           UUID PRIMARY KEY
+  - phone        TEXT UNIQUE NOT NULL
+  - name         TEXT
+  - city         TEXT
+  - created_at   TIMESTAMP
+
+TABLE: articles
+  - id           UUID PRIMARY KEY
+  - author_id    UUID REFERENCES users(id)
+  - title        TEXT NOT NULL
+  - body         TEXT NOT NULL
+  - category     TEXT  (Politics, Technology, Education, Crime, Environment, Other)
+  - location_text TEXT
+  - image_url    TEXT
+  - status       TEXT  (pending / live / rejected)
+  - created_at   TIMESTAMP
+
+================================================================
+PROJECT STRUCTURE
+================================================================
+narad/
+├── backend/
+│   ├── src/
+│   │   ├── routes/
+│   │   │   ├── articles.js
+│   │   │   └── users.js
+│   │   ├── middleware/
+│   │   │   └── auth.js
+│   │   ├── db/
+│   │   │   └── schema.sql
+│   │   └── index.js
+│   ├── .env.example
+│   └── package.json
+│
+├── mobile/
+│   ├── app/
+│   │   ├── _layout.tsx
+│   │   ├── login.tsx
+│   │   ├── (tabs)/
+│   │   │   ├── _layout.tsx
+│   │   │   ├── index.tsx       ← Home Feed
+│   │   │   ├── search.tsx
+│   │   │   ├── post.tsx
+│   │   │   └── profile.tsx
+│   │   └── article/
+│   │       └── [id].tsx        ← Article Detail
+│   ├── components/
+│   │   └── ArticleCard.tsx
+│   ├── lib/
+│   │   ├── supabase.ts
+│   │   └── api.ts
+│   ├── app.json
+│   └── package.json
+│
+└── narad_v1_plan.txt           ← this file
+
+================================================================
+V1 → V1.1 → V2 ROADMAP
+================================================================
+V1   : Manual verification, text search, image posts, basic feed
+V1.1 : Map view, follow system, push notifications
+V2   : AI verification, AI writing assistant, points/monetization, video posts
+
+================================================================
